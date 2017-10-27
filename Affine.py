@@ -71,7 +71,7 @@ def freq(ciphertext):
 # first finding all potential keys starting with the most frequently occurring sample letters then
 # testing each key by applying the decryption function on the ciphertext
 # and printing the results to see if anyone of them is intelligible
-def frequency_analysis(ciphertext):  # Doesn't work yet
+def frequency_analysis(ciphertext):
     f = freq(ciphertext)
     for i in range(len(f)-2):
         if i == 0:

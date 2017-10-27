@@ -35,6 +35,7 @@ def freq(ciphertext):
     return sorted(unsorted_table.items(), key=operator.itemgetter(1), reverse=True)
 
 
+# returns the index of coincidence of the given ciphertext string
 def IC(x):
     frequency_table = freq(x)
     n = reduce(lambda a, b: a+b, [f_i[1] for f_i in frequency_table])
