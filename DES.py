@@ -73,6 +73,14 @@ def hex_to_binary(hexstring):
     return bitarray(hexstring_to_binary_string(hexstring))
 
 
+# formats the given binary string into readable 4-bit partitions separated by spaces
+def format_spaces(string):
+    op = ""
+    for i in range(0, len(string), 4):
+        op += string[i:i + 4] + " "
+    return op
+
+
 # given a 32-bit string returns a permuted 32-bit string under the p permutation
 def p_permute(c):
     op = ""
@@ -176,21 +184,18 @@ def generate_keys(key):
 # given the initial 32-bit left and right permuted key string partitions and the round key schedule
 # performs 16 rounds of encryption and returns a 64-bit string
 def loop(l, r, round_keys):
-    def format_spaces(string):
-        op = ""
-        for i in range(0, len(string), 4):
-            op += string[i:i + 4] + " "
-        return op
+
 
     if len(round_keys) == 0:
         return ip_inv_permute(r+l)  # swap L16 with D16 returning a 64-bit string
     else:
-        print("Round " + str(17 - len(round_keys)) + ": " + format_spaces(str(round_keys[0])))
-
-
+        round = 17 - len(round_keys)
         l_n = r
         k = round_keys[0]
         r_n = (bitarray(l) ^ bitarray(f(r, k))).to01()  # xor the previous left with the result of the feistel network
+        print("Round " + str(round) + ": " + format_spaces(str(k)))
+        print("L"+str(round)+" = " + l_n + ", R"+str(round)+" = " + r_n)
+
         return loop(l_n, r_n, round_keys[1:len(round_keys)])
 
 
@@ -286,6 +291,9 @@ def test_hexstring_to_binary_string():
     key = "1122334455667788"
     result = hexstring_to_binary_string(key)
     expected = "0001000100100010001100110100010001010101011001100111011110001000"
+    x = "00AABBCCDDEEFF99"
+    result2 = hexstring_to_binary_string(x)
+    print(format_spaces(result2))
     return result == expected
 
 # print(test_hexstring_to_binary_string())
@@ -328,11 +336,30 @@ def test_pc2_permute():
 
 # test_pc2_permute()
 
+def test_ip_permute():
+    x = "00AABBCCDDEEFF99"
+    # x = "0123456789ABCDEF"
+    result = hexstring_to_binary_string(x)
+    ip = ip_permute(result)
+    l0 = ip[0:32]
+    r0 = ip[32:64]
+    print("l0: "+format_spaces(l0))
+    print("r0: "+format_spaces(r0))
+    expectedl0 = "11001100000000001100110011111111"
+    expectedr0 = "11110000101010101111000010101010"
+    # return l0 == expectedl0 and r0 == expectedr0
+
+
+# print(test_ip_permute())
+
+
 def test_p_permute():
-    s = "01011100100000101011010110010111"
+    # s = "01011100100000101011010110010111"
+    s = "01000010100110110000100010000100"
     result = p_permute(s)
-    expected = "00100011010010101010100110111011"
-    return result == expected
+    print(format_spaces(result))
+    # expected = "00100011010010101010100110111011"
+    # return result == expected
 
 # print(test_p_permute())
 
@@ -392,49 +419,51 @@ def test_collect_cn_or_dn():
 
 
 def test_expand():
-    r_0 = "11110000101010101111000010101010"
-    print(len(r_0))
+    # r_0 = "11110000101010101111000010101010"
+    r_0 = "11111110011001101111111001100110"
     result = expand(r_0)
-    print(result)
-    print(len(result))
-    expected = "011110100001010101010101011110100001010101010101"
-    print(expected)
-    print(len(expected))
-    return result == expected
+    print(format_spaces(result))
+    # expected = "011110100001010101010101011110100001010101010101"
+    # print(expected)
+    # print(len(expected))
+    # return result == expected
 
 # print(test_expand())
 
 
 def test_f():
-    r_0 = "11110000101010101111000010101010"
-    k1 = "000110110000001011101111111111000111000001110010"
-
+    # r_0 = "11110000101010101111000010101010"
+    r_0 = "11111110011001101111111001100110"
+    # k1 = "000110110000001011101111111111000111000001110010"
+    k1 = "011000010011001000001000000101110010101011000010"
     e = bitarray(expand(r_0))
     print(e)
     k = bitarray(k1)
     print(k)
     result = (e ^ k).to01()
-    print(result)
+    print(format_spaces(result))
 
     expected = "011000010001011110111010100001100110010100100111"
-    print(expected)
+    # print(expected)
 
-    return result == expected
+    # return result == expected
 
 # print(test_f())
 
 
 def test_s_box():
-    r_0 = "11110000101010101111000010101010"
-    k1 = "000110110000001011101111111111000111000001110010"
-
-    e = bitarray(expand(r_0))
-    k = bitarray(k1)
-    xored = (e ^ k).to01()
+    # r_0 = "11110000101010101111000010101010"
+    # k1 = "000110110000001011101111111111000111000001110010"
+    #
+    # e = bitarray(expand(r_0))
+    # k = bitarray(k1)
+    # xored = (e ^ k).to01()
+    xored = "000111101111000100000101011010001110100111001111"
     print(xored)
     result = s_box(xored)
-    expected = "01011100100000101011010110010111"
-    return result == expected
+    print(format_spaces(result))
+    # expected = "01011100100000101011010110010111"
+    # return result == expected
 
 # print(test_s_box())
 
@@ -463,5 +492,9 @@ def print_round_keys():
     result = DES(x, key)
 
 
-print(print_round_keys())
+# print(print_round_keys())
 
+f_op = "11010100010000001000000101100001"
+l0 = "01111000110101000111100011010100"
+res = bitarray(f_op) ^ bitarray(l0)
+print(format_spaces(res.to01()))

@@ -28,6 +28,21 @@ def ek(key, plaintext):
     return y.upper()
 
 
+def dk(key, plaintext):
+    m = len(key)
+    y = ""
+    print("|p|="+str(len(plaintext)))
+    print("|k|="+str(m))
+    for i in range(len(plaintext)):
+        ki = key[i % m]
+        print("ki:" + ki)
+        xi = plaintext[i]
+        print("xi:"+xi)
+        y += sigex((sigex(xi)+sigex(ki)) % 26)
+        print("y:"+y+"\n")
+    return y.upper()
+
+
 # returns a list representation of the frequency table for the given ciphertext string
 # sorted in ascending order by occurrence number
 def freq(ciphertext):
@@ -70,7 +85,7 @@ def most_common_substrings(ciphertext):
 
 # y = most_common_substrings(vigenere_ciphertext)
 # print(y)
-# for i in range(1, 30):
+# for i in z_p(1, 30):
 #     print(str(y[i]))
 # print(str(len(y))+" distinct substrings")
 
@@ -91,15 +106,15 @@ def find_key_length(most_common, ciphertext):
                             for i in range(1, len(indices_of_occurrence)-1)]) if len(indices_of_occurrence) > 2 else gcd(indices_of_occurrence[0], indices_of_occurrence[1])
 
 
-def kasiski(ciphertext, n):
-    ngram_freq = sorted(most_common_substrings_length_n(ciphertext, n).items(), key=operator.itemgetter(1),
-               reverse=True)
-    print(str(n)+"-grams = " + str(ngram_freq))
-    print(str(len(ngram_freq)) + " distinct substrings of length " + str(n))
-    most_common_ngram = ngram_freq[0][0]
-    y = find_key_length(most_common_ngram, ciphertext)
-    return y
-    # print("m = " + str(y))
+# def kasiski(ciphertext, n):
+#     ngram_freq = sorted(most_common_substrings_length_n(ciphertext, n).items(), key=operator.itemgetter(1),
+#                reverse=True)
+#     print(str(n)+"-grams = " + str(ngram_freq))
+#     print(str(len(ngram_freq)) + " distinct substrings of length " + str(n))
+#     most_common_ngram = ngram_freq[0][0]
+#     y = find_key_length(most_common_ngram, ciphertext)
+#     return y
+#     # print("m = " + str(y))
 
 
 
@@ -113,21 +128,33 @@ ciphertext2 = "fkejshfcjlsieiohb"  # should have an IC value closer to 0.038
 # print(ic1)
 # print(ic2)
 
-vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
-
-unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
+# vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
+# unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
 
 
 # kasiski(vigenere_ciphertext, 3)
 # kasiski(unknown_ciphertext, 3)
 
 
-n = len(vigenere_ciphertext)
-m = kasiski(vigenere_ciphertext, 3)
-print(n/m)
+# n = len(vigenere_ciphertext)
+# m = kasiski(vigenere_ciphertext, 3)
+# print(n/m)
 
-for i in range(m):
-    y = ""
-    for j in range(int(n/m)):
-        y+= vigenere_ciphertext[i]
+# for i in range(m):
+#     y = ""
+#     for j in range(int(n/m)):
+#         y+= vigenere_ciphertext[i]
 
+y = "vkqcgev"
+
+k1 = "AAAAAA"
+k2 = "HALHALH"
+
+# print(dk(k1, dk(k2, y)))
+# print(sigex("V"))
+# print(sigex("K"))
+# print(sigex("Q"))
+# print(sigex("C"))
+# print(sigex("G"))
+# print(sigex("E"))
+# print(sigex("V"))
