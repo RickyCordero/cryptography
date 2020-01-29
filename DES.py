@@ -60,53 +60,67 @@ s8 = numpy.matrix("13 2 8 4 6 15 11 1 10 9 3 14 5 0 12 7;"
 s_boxes = [s1, s2, s3, s4, s5, s6, s7, s8]
 
 
-# converts a hexstring to a binary string
 def hexstring_to_binary_string(hexstring):
+    """
+    Converts a hexstring to a binary string
+    """
     op = ''
     for char in hexstring:
         op += hex_bin_dict[char]
     return op
 
 
-# converts a hexadecimal string to a bitarray object
 def hex_to_binary(hexstring):
+    """
+    Converts a hexadeceimal string to a bitarray object
+    """
     return bitarray(hexstring_to_binary_string(hexstring))
 
 
-# formats the given binary string into readable 4-bit partitions separated by spaces
 def format_spaces(string):
+    """
+    Formats the given binary string into readable 4-bit partitions separated by spaces
+    """
     op = ""
     for i in range(0, len(string), 4):
         op += string[i:i + 4] + " "
     return op
 
 
-# given a 32-bit string returns a permuted 32-bit string under the p permutation
 def p_permute(c):
+    """
+    Given a 32-bit string, returns a permuted 32-bit string under the p permutation
+    """
     op = ""
     for index in p:
         op += c[index-1]
     return op
 
 
-# given a 64-bit binary keystring returns a permuted 56-bit binary keystring
 def pc1_permute(keystring):
+    """
+    Given a 64-bit binary keystring, returns a permuted 56-bit binary keystring
+    """
     k = ""
     for index in pc1:
         k += keystring[index-1]
     return k
 
 
-# given a 56-bit binary key string permutes it using the pc2 table and returns a 48-bit binary round keystring
 def pc2_permute(keystring):
+    """
+    Given a 56-bit binary key string, permutes it using the pc2 table and returns a 48-bit binary round keystring
+    """
     k = ""
     for index in pc2:
         k += keystring[index-1]
     return k
 
 
-# given a 64-bit binary bitstring returns a permuted 64-bit binary bitstring using the ip table
 def ip_permute(bitstring):
+    """
+    Given a 64-bit binary bitstring, returns a permuted 64-bit binary bitstring using the ip table
+    """
     op = ""
     for index in ip:
         # print(index)
@@ -114,37 +128,48 @@ def ip_permute(bitstring):
     return op
 
 
-# given a 64-bit binary bitstring returns a permuted 64-bit binary bitstring using the ip inverse table
 def ip_inv_permute(bitstring):
+    """
+    Given a 64-bit binary bitstring, returns a permuted 64-bit binary bitstring using the ip inverse table
+    """
     op = ""
     for index in ip_inv:
         op += bitstring[index-1]
     return op
 
 
-# max bits > 0 == width of the value in bits (e.g., int_16 -> 16)
-# Rotate left: 0b1001 --> 0b0011
 def rotate_left(val, r_bits, max_bits):
+    """
+    max bits > 0 == width of the value in bits (e.g., int_16 -> 16)
+    Rotate left: 0b1001 --> 0b0011
+    """
     return (val << r_bits%max_bits) & (2**max_bits-1) | \
     ((val & (2**max_bits-1)) >> (max_bits-(r_bits%max_bits)))
 
 
-# given a binary bitstring, circularly shifts it by the given shift length
 def shift_left(bitstring, shift_length):
+    """
+    Given a binary bitstring, circularly shifts it by the given shift length
+    """
     return bin(rotate_left(int(bitstring, 2), shift_length, len(bitstring)))[2:].zfill(len(bitstring))
 
 
-# given the initial 24-bit left or right half, c_0 or d_0, generates the respective nth round half c_n, or d_n
 def generate_cn_or_dn(c, n):
+    """
+    Given the initial 24-bit left or right half, c_0 or d_0, generates the respective nth round half
+    c_n, or d_n
+    """
     if n == 0:
         return c
     else:
         return generate_cn_or_dn_recurse(c, n, 0)
 
 
-# given the initial 24-bit left or right half, c_0 or d_0, generates the respective nth round half c_n, or d_n by
-# accumulating on the integer n which begins with value 1
 def generate_cn_or_dn_recurse(c, n, i):
+    """
+    Given the initial 24-bit left or right half, c_0 or d_0, generates the respective nth round half
+    c_n, or d_n by accumulating on the integer n
+    """
     if i == n:
         return c
     if i+1 == 16:
@@ -158,34 +183,39 @@ def generate_cn_or_dn_recurse(c, n, i):
         return generate_cn_or_dn_recurse(shift_left(c, shift_length), n, i+1)
 
 
-# returns the list of all half bitstrings for each round key prior to PC2 permuting
 def collect_cn_or_dn(c):
+    """
+    Returns the list of all half bitstrings for each round key prior to PC2 permuting
+    """
     return [generate_cn_or_dn(c, n) for n in range(1, 17)]
 
 
-# given the initial left and right 28-bit binary strings, generates the key schedule list by permuting the
-# concatenation of all left and right corresponding pairs
 def collect_keys(c0, d0):
+    """
+    Given the initial left and right 28-bit binary strings, generates the key schedule list by permuting the    concatenation of all left and right corresponding pairs
+    """
     c_n = collect_cn_or_dn(c0)  # evaluates each c_n into a list
     d_n = collect_cn_or_dn(d0)  # evaluates each d_n into a list
     round_keys = [pc2_permute(x[0]+x[1]) for x in zip(c_n, d_n)]  # permutes the concatenation of each respective c_n, d_n
     return round_keys
 
 
-# given the initial 64-bit key, converts it to a 56-bit binary string by permuting it under PC1, then
-# splits the result into two 28-bit binary strings, and generates the key schedule with those two strings
 def generate_keys(key):
+    """
+    Given the initial 64-bit key, converts it to a 56-bit binary string by permuting it under PC1, then
+    splits the result into two 28-bit binary strings, and generates the key schedule with those two strings
+    """
     pc1_k = pc1_permute(hexstring_to_binary_string(key))  # shortens the key into a permuted 56-bit binary string
     c0 = pc1_k[0:28]  # a 28-bit binary keystring representing the left half
     d0 = pc1_k[28:56]  # a 28-bit binary keystring representing the right half
     return collect_keys(c0, d0)
 
 
-# given the initial 32-bit left and right permuted key string partitions and the round key schedule
-# performs 16 rounds of encryption and returns a 64-bit string
 def loop(l, r, round_keys):
-
-
+    """
+    Given the initial 32-bit left and right permuted key string partitions and the round key 
+    schedule, performs 16 rounds of encryption and returns a 64-bit string
+    """
     if len(round_keys) == 0:
         return ip_inv_permute(r+l)  # swap L16 with D16 returning a 64-bit string
     else:
@@ -199,9 +229,11 @@ def loop(l, r, round_keys):
         return loop(l_n, r_n, round_keys[1:len(round_keys)])
 
 
-# expands the given 32-bit string into a 48 bit-string
-# by permuting the given string and adding 16 twice repeating bits
 def expand(r_i):
+    """
+    Expands the given 32-bit string into a 48 bit-string
+    by permuting the given string and adding 16 twice repeating bits
+    """
     op = ""
     j = 0
     for i in range(j, len(r_i)):
@@ -216,9 +248,11 @@ def expand(r_i):
     return op
 
 
-# given a 48-bit string, partitions it into 8 6-bit substrings and for each substring returns a 4-bit string
 def s_box(b_i):
-
+    """
+    Given a 48-bit string, partitions it into 8 6-bit substrings and for each 
+    substring returns a 4-bit string
+    """
     b1 = b_i[0:6]
     b2 = b_i[6:12]
     b3 = b_i[12:18]
@@ -238,8 +272,10 @@ def s_box(b_i):
     return s
 
 
-# takes a 32-bit string, and a 48-bit round key, then outputs a 32-bit string
 def f(r_i, k):
+    """
+    Takes a 32-bit string, and a 48-bit round key, and outputs a 32-bit string
+    """
     a = expand(r_i)  # expands the 32-bit string to a 48-bit string using the e table
     b = (bitarray(a) ^ bitarray(k)).to01()  # xor the resultant 48-bit string with the 48-bit key and convert to string
     c = s_box(b)
@@ -247,8 +283,10 @@ def f(r_i, k):
     return p_c
 
 
-# given a 64-bit hex plaintext string, and a 64-bit hex key, produces a 64-bit hex ciphertext
 def DES(plaintext, key):
+    """
+    Given a 64-bit hex plaintext string, and a 64-bit hex key, produces a 64-bit hex ciphertext
+    """
     round_keys = generate_keys(key)
     ip = ip_permute(hexstring_to_binary_string(plaintext))  # a 64-bit permutation of the given plaintext
     l_0 = ip[0:32]  # left initial permuted 32-bit string

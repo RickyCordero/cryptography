@@ -43,23 +43,29 @@ def dk(key, plaintext):
     return y.upper()
 
 
-# returns a list representation of the frequency table for the given ciphertext string
-# sorted in ascending order by occurrence number
 def freq(ciphertext):
+    """
+    Returns a list representation of the frequency table for the given ciphertext string
+    sorted in ascending order by occurrence number
+    """
     unsorted_table = {character.lower(): ciphertext.count(character) for character in set(ciphertext)}
     return sorted(unsorted_table.items(), key=operator.itemgetter(1), reverse=True)
 
 
-# returns the index of coincidence of the given ciphertext string
 def IC(x):
+    """
+    Returns the index of coincidence of the given ciphertext string
+    """
     frequency_table = freq(x)
     n = reduce(lambda a, b: a+b, [f_i[1] for f_i in frequency_table])
     return reduce(lambda a, b: a+b, [f_i[1]*(f_i[1]-1) for f_i in frequency_table])/(n*(n-1))
 
 
-# returns a dictionary of all {substring: frequency} pairs found in the given ciphertext string
-# for all substrings of length n
 def most_common_substrings_length_n(ciphertext, n):
+    """
+    Returns a dictionary of all {substring: frequency} pairs found in the given ciphertext string
+    for all substrings of length n
+    """
     f = {}
     for i in range(len(ciphertext)-(n-1)):
         curr = ciphertext[i:i+n]
@@ -70,8 +76,11 @@ def most_common_substrings_length_n(ciphertext, n):
     return f
 
 
-# returns a list of all (substring,frequency) pairs sorted in ascending order by frequency over the entire ciphertext
 def most_common_substrings(ciphertext):
+    """
+    Returns a list of all (substring,frequency) pairs sorted in ascending order by frequency
+    over the entire ciphertext
+    """
     f = {}
     for i in range(1, len(ciphertext)):
         d = most_common_substrings_length_n(ciphertext, i)

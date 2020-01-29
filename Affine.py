@@ -10,9 +10,10 @@ true_freq_list = sorted({"e": 13.11, "t": 10.47, "a": 8.15, "o": 8.00, "n": 7.1,
                                       "k": 0.42, "x": 0.17, "j": 0.13, "q": 0.12, "z": 0.08}.items(), key=operator.itemgetter(1), reverse=True)
 
 
-# returns the integer representation of the given english character a, if an english character is given
-# otherwise, returns the string representation of the given integer a, if an integer is given
 def index(a):
+    """
+    Returns the integer representation of the given English character, otherwise returns the string representation of the given integer
+    """
     sigma = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
              "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     if isinstance(a, str):
@@ -21,28 +22,38 @@ def index(a):
         return sigma[a]
 
 
-# returns a list containing the integer representations of each character over Z_26 in the given plaintext string
 def index_convert(plaintext):
+    """
+    Returns a list containing the integer representations of each character over Z_26 in the given plaintext string
+    """
     return [index(character) for character in plaintext]
 
 
-# returns the encryption function given the key k = (a,b) in Z_26
 def e(a, b):
+    """
+    Returns the encryption function given the key k = (a,b) in Z_26
+    """
     return lambda x: (a*x + b) % 26
 
 
-# returns the decryption function given the key k = (a,b) in Z_26
 def d(a, b):
+    """
+    Returns the decryption function given the key k = (a,b) in Z_26
+    """
     return (lambda x: inv(a)*(x-b) % 26) if (a in inv_zn(26)) else ("("+str(a)+", "+str(b)+") is an invalid decryption key")
 
 
-# returns the inverse of x in Z_26 if x is invertible
 def inv(x):
+    """
+    Returns the inverse of x in Z_26 if x is invertible
+    """
     return inv_n(x, 26)
 
 
-# returns the inverse of x in Z_n if x is invertible
 def inv_n(x, n):
+    """
+    Returns the inverse of x in Z_n if x is invertible
+    """
     for i in range(n):
         if i * x % n == 1:
             return i
@@ -50,28 +61,32 @@ def inv_n(x, n):
         if x >= n else str(x) + " is not invertible in Z_"+str(n)
 
 
-# returns the set of coprime integers less than n in Z_26
 def inv_zn(n):
+    """
+    Returns the set of coprime integers less than n in Z_26
+    """
     return [x for x in range(n) if gcd(x, 26) == 1]
 
 
-# returns the number of coprime integers less than n in Z_26
 def phi(n):
+    """
+    Returns the number of coprime integers less than n in Z_26
+    """
     return len(inv_zn(n))
 
 
-# returns a list representation of the frequency table for the given ciphertext string
-# sorted in ascending order by occurrence number
 def freq(ciphertext):
+    """
+    Returns a list representation of the frequency table for the given ciphertext string sorted in ascending order by occurrence number
+    """
     unsorted_table = {character.lower(): ciphertext.count(character) for character in set(ciphertext)}
     return sorted(unsorted_table.items(), key=operator.itemgetter(1), reverse=True)
 
 
-# performs a brute force attack on the ciphertext by
-# first finding all potential keys starting with the most frequently occurring sample letters then
-# testing each key by applying the decryption function on the ciphertext
-# and printing the results to see if anyone of them is intelligible
 def frequency_analysis(ciphertext):
+    """
+    Performs a brute force attack on the ciphertext by first finding all potential keys starting with the most frequently occurring sample letters then testing each key by applying the decryption function on the ciphertext and printing the results ot see if anyone of them is intelligible
+    """
     f = freq(ciphertext)
     for i in range(len(f)-2):
         if i == 0:
@@ -99,14 +114,17 @@ def frequency_analysis(ciphertext):
             max_occuring_character = f[len(f) - (i + 1)][1]
 
 
-# returns the list of all keys k = (a, b) from U(Z_26) x Z_26 such that e(a,b)(x) = y
 def keys(x, y):
+    """
+    Returns the list all keys k = (a, b) from U(Z_26) x Z_26 such that e(a, b)(x) = y
+    """
     return [(a, b) for a, b in [key for key in itertools.product(inv_zn(26), [n for n in range(26)])] if e(a, b)(x) == y]
 
 
-# constructs and prints multiple plaintext strings using each key in keys by
-# concatenating the result of the decryption function on each ciphertext character
 def brute_force(ciphertext):
+    """
+    Constructs and prints multiple plaintext strings using each key in keys by concatenating the result of the decryption function on each ciphertext character
+    """
     frequency_list = freq(ciphertext)
     print("sample frequencies:")
     print(frequency_list)

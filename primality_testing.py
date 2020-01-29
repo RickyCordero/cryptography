@@ -2,13 +2,17 @@ from math import log
 from math import gcd
 
 
-# Returns the approximate number of primes less than n
 def pi(n):
+    """
+    Returns the approximate number of primes less than n
+    """
     return n/log(n)
 
 
-# Returns the list of Fermat-witnesses of n
 def fermat_witnesses(n):
+    """
+    Returns the list of Fermat-witnesses of n
+    """
     return [x for x in range(1, n) if (x**n % n) != x]
 
 
@@ -16,8 +20,10 @@ def fermat_witnesses(n):
 #     return [x for x in range(1, )]
 
 
-# Returns the pair k,q where n-1 = (2^k)*q
 def factor(n):
+    """
+    Returns the pair k,q where n-1 = (2^k)*q
+    """
     m = n-1
     k = 0
     q = 0
@@ -28,8 +34,11 @@ def factor(n):
     return k, q
 
 
-# Determines if the number n is composite using the Miller Rabin test with the integer a between 1 and n exclusively
 def miller_rabin_composite(a, n):
+    """
+    Determines if the number n is composite using the Miller Rabin test
+    with the integer a between 1 and n exclusively
+    """
     print("a = "+str(a))
     f = factor(n)
     k = f[0]
@@ -51,8 +60,10 @@ def miller_rabin_composite(a, n):
     return True
 
 
-# Determines if the given number is composite
 def fermat_composite(n):
+    """
+    Determines if the given number is composite
+    """
     return len(fermat_witnesses(n)) > 0
 
 r1 = 1105
