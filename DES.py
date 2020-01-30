@@ -264,7 +264,6 @@ def s_box(b_i):
     b8 = b_i[42:48]
 
     bs = [b1, b2, b3, b4, b5, b6, b7, b8]
-    # bs = [b_i[i:i+6] for i in range(0,48,6)]
     s = ""  # a 32-bit string representing the concatenation S1(B1)S2(B2)...S8(B8) to be returned
     for i in range(8):
         decimal_row = int(bs[i][0] + bs[i][5], 2)  # concatenate b_j_1 and b_j_6, then converts the result to decimal number
@@ -292,17 +291,8 @@ def DES(plaintext, key):
     ip = ip_permute(hexstring_to_binary_string(plaintext))  # a 64-bit permutation of the given plaintext
     l_0 = ip[0:32]  # left initial permuted 32-bit string
     r_0 = ip[32:64]  # right initial permuted 32-bit string
-
     x = loop(l_0, r_0, round_keys)
-
     return x
-
-
-x = "0123456789ABCDEF"
-
-k_original = "133457799BBCDFF1"
-
-k = "1122334455667788"
 
 
 def test_rotate_left():
@@ -312,16 +302,12 @@ def test_rotate_left():
     op = bin(rotate_left(intbit1, 1, 4))[2:].zfill(4)
     return op == bit2
 
-# print(test_rotate_left())
-
 
 def test_shift_left():
     c1 = "0000000011110000110011001011"
     result = shift_left(c1, 1)
     expected = "0000000111100001100110010110"
     return result == expected
-
-# print(test_shift_left())
 
 
 def test_hexstring_to_binary_string():
@@ -333,8 +319,6 @@ def test_hexstring_to_binary_string():
     print(format_spaces(result2))
     return result == expected
 
-# print(test_hexstring_to_binary_string())
-
 
 def test_halves():
     key = "1122334455667788"
@@ -345,8 +329,6 @@ def test_halves():
     expected2 = "0110011001111000100000000101"
     return result1 == expected1 and result2 == expected2
 
-# print(test_halves())
-
 
 def test_pc1_permute():
     key = "1122334455667788"
@@ -354,11 +336,8 @@ def test_pc1_permute():
     expected = "10000000011110000110011001010110011001111000100000000101"
     return result == expected
 
-# print(test_pc1_permute())
-
 
 def test_pc2_permute():
-    # key = "1122334455667788"
     key = "133457799BBCDFF1"
     pc1 = pc1_permute(hexstring_to_binary_string(key))
     c0 = pc1[0:28]
@@ -371,11 +350,8 @@ def test_pc2_permute():
     print(keys)
 
 
-# test_pc2_permute()
-
 def test_ip_permute():
     x = "00AABBCCDDEEFF99"
-    # x = "0123456789ABCDEF"
     result = hexstring_to_binary_string(x)
     ip = ip_permute(result)
     l0 = ip[0:32]
@@ -384,21 +360,12 @@ def test_ip_permute():
     print("r0: "+format_spaces(r0))
     expectedl0 = "11001100000000001100110011111111"
     expectedr0 = "11110000101010101111000010101010"
-    # return l0 == expectedl0 and r0 == expectedr0
-
-
-# print(test_ip_permute())
 
 
 def test_p_permute():
-    # s = "01011100100000101011010110010111"
     s = "01000010100110110000100010000100"
     result = p_permute(s)
     print(format_spaces(result))
-    # expected = "00100011010010101010100110111011"
-    # return result == expected
-
-# print(test_p_permute())
 
 
 def test_collect_keys():
@@ -407,12 +374,9 @@ def test_collect_keys():
     c0 = pc1[0:28]
     d0 = pc1[28:56]
     result = collect_keys(c0, d0)
-    # return result == expected
     print(result)
     print(type(result))
     print(len(result))
-
-# test_collect_keys()
 
 
 def test_generate_cn_or_dn():
@@ -437,9 +401,6 @@ def test_generate_cn_or_dn():
     expected4 = "1011001100111100010000000010"  # d15
     return result1 == expected1 and result2 == expected2 and result3 == expected3 and result4 == expected4
 
-# print(test_generate_cn_or_dn())
-
-
 def test_collect_cn_or_dn():
     key = "1122334455667788"
     pc1 = pc1_permute(hexstring_to_binary_string(key))
@@ -452,26 +413,18 @@ def test_collect_cn_or_dn():
     print(d_n)
     print(len(d_n))
 
-# test_collect_cn_or_dn()
-
 
 def test_expand():
-    # r_0 = "11110000101010101111000010101010"
     r_0 = "11111110011001101111111001100110"
     result = expand(r_0)
     print(format_spaces(result))
-    # expected = "011110100001010101010101011110100001010101010101"
-    # print(expected)
-    # print(len(expected))
-    # return result == expected
-
-# print(test_expand())
+    expected = "011110100001010101010101011110100001010101010101"
+    print(expected)
+    return result == expected
 
 
 def test_f():
-    # r_0 = "11110000101010101111000010101010"
     r_0 = "11111110011001101111111001100110"
-    # k1 = "000110110000001011101111111111000111000001110010"
     k1 = "011000010011001000001000000101110010101011000010"
     e = bitarray(expand(r_0))
     print(e)
@@ -479,59 +432,30 @@ def test_f():
     print(k)
     result = (e ^ k).to01()
     print(format_spaces(result))
-
     expected = "011000010001011110111010100001100110010100100111"
-    # print(expected)
-
-    # return result == expected
-
-# print(test_f())
-
+    print(format_spaces(expected))
 
 def test_s_box():
-    # r_0 = "11110000101010101111000010101010"
-    # k1 = "000110110000001011101111111111000111000001110010"
-    #
-    # e = bitarray(expand(r_0))
-    # k = bitarray(k1)
-    # xored = (e ^ k).to01()
     xored = "000111101111000100000101011010001110100111001111"
     print(xored)
     result = s_box(xored)
     print(format_spaces(result))
-    # expected = "01011100100000101011010110010111"
-    # return result == expected
-
-# print(test_s_box())
 
 
 def DES_test():
-    x = "00AABBCCDDEEFF99"
-    key = "1122334455667788"
-    x_original = "0123456789ABCDEF"
-    k_original = "133457799BBCDFF1"
-    result_original = DES(x_original, k_original)
-    expected_original = "1000010111101000000100110101010000001111000010101011010000000101"
-    # result = DES(x, key)
-    # expected = ""
-    return result_original == expected_original
-
-# print(DES_test())
+    x = "0123456789ABCDEF"
+    key = "133457799BBCDFF1"
+    result = DES(x, key)
+    expected = "1000010111101000000100110101010000001111000010101011010000000101"
+    print("result: "+format_spaces(result))
+    print("expected: "+format_spaces(expected))
+    return result == expected
 
 
 def print_round_keys():
-
-    x_original = "0123456789ABCDEF"
-    k_original = "133457799BBCDFF1"
-    # result_original = DES(x_original, k_original)
     x = "00AABBCCDDEEFF99"
     key = "1122334455667788"
     result = DES(x, key)
 
-
-# print(print_round_keys())
-
-f_op = "11010100010000001000000101100001"
-l0 = "01111000110101000111100011010100"
-res = bitarray(f_op) ^ bitarray(l0)
-print(format_spaces(res.to01()))
+if __name__ == "__main__":
+    print(DES_test())

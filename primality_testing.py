@@ -39,11 +39,9 @@ def miller_rabin_composite(a, n):
     Determines if the number n is composite using the Miller Rabin test
     with the integer a between 1 and n exclusively
     """
-    print("a = "+str(a))
     f = factor(n)
     k = f[0]
     q = f[1]
-    print(k, q)
     b0 = (a ** q) % n
     if b0 == 1 or b0 == -1:
         return False
@@ -66,39 +64,37 @@ def fermat_composite(n):
     """
     return len(fermat_witnesses(n)) > 0
 
-r1 = 1105
-r2 = 294409
-r3 = 294439
-
-c1 = 561
-c2 = 1105
-c3 = 1729
-
-# tests = lambda n: [x for x in range(1, n) if gcd(x, n) == 1]
-
 
 def find_miller_rabin_witness(n):
+    """
+    Finds the miller rabin witnesses of the given number
+    """
     i = 2
     while not miller_rabin_composite(i, n):
         i += 1
     return i
 
-# print(pi(100))
-# print(factor(1729))
-# print(factor(r1))
-# print(fermat_witnesses(561))
-# print(fermat_composite(561))
+def test_pi():
+    print(pi(100))
 
-n1 = 118901509  # is prime
-n2 = 118901529  # is not prime
+def test_factor():
+    print(factor(1729))
+    print(factor(1105))
 
-print(factor(n1))
-print(factor(n2))
+def test_fermat_witnesses():
+    print(fermat_witnesses(561))
 
+def test_fermat_composite():
+    print(fermat_composite(561))
 
-# print(find_miller_rabin_witness(n1))
-# print(find_miller_rabin_witness(r2))
-# print(find_miller_rabin_witness(r3))
+def test_miller_rabin_witness():
+    n1 = 118901509  # is prime
+    print("n1: ",n1)
+    print("miller rabin witness: ",find_miller_rabin_witness(n1))
+    
+def test_miller_rabin_composite():
+    n2 = 118901529  # is not prime
+    print("miller rabin composite: ", miller_rabin_composite(2, n2))
 
-# print(miller_rabin_composite(2, n2))
-# miller_rabin_composite(2, 1729)
+if __name__ == "__main__":
+    test_miller_rabin_witness() 

@@ -1,6 +1,6 @@
 # cryptography
 
-Some cryptographic functions implemented in Python.
+Some cryptographic algorithms implemented in Python.
 
 ## Getting Started
 
@@ -9,8 +9,6 @@ Some cryptographic functions implemented in Python.
 - Python 3
 
 ### Installing
-
-A step by step series of examples that tell you how to get a development env running
 
 - Create and activate a virtual environment
 
@@ -25,10 +23,32 @@ source venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
-## Usage
+### Algorithms
+
+## DES
 
 Test the DES encryption algorithm:
 
 ```
 python des.py
 ```
+
+## Affine Cipher
+
+Test the Affine cipher:
+
+```
+python affine.py
+```
+
+## Primality Testing
+
+Run the Miller-Rabin primality test:
+
+```
+python primality_testing.py
+```
+
+## TODO:
+
+- Need to implement RSA, ...

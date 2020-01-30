@@ -92,17 +92,8 @@ def most_common_substrings(ciphertext):
     return sorted(f.items(), key=operator.itemgetter(1), reverse=True)
 
 
-# y = most_common_substrings(vigenere_ciphertext)
-# print(y)
-# for i in z_p(1, 30):
-#     print(str(y[i]))
-# print(str(len(y))+" distinct substrings")
-
-
 def find_indices_of_most_common(findme, ciphertext):
     return [match.start() for match in re.finditer(findme, ciphertext)]
-
-# print(find_indices_of_most_common(most_common, vigenere_ciphertext))
 
 
 def find_key_length(most_common, ciphertext):
@@ -115,55 +106,35 @@ def find_key_length(most_common, ciphertext):
                             for i in range(1, len(indices_of_occurrence)-1)]) if len(indices_of_occurrence) > 2 else gcd(indices_of_occurrence[0], indices_of_occurrence[1])
 
 
-# def kasiski(ciphertext, n):
-#     ngram_freq = sorted(most_common_substrings_length_n(ciphertext, n).items(), key=operator.itemgetter(1),
-#                reverse=True)
-#     print(str(n)+"-grams = " + str(ngram_freq))
-#     print(str(len(ngram_freq)) + " distinct substrings of length " + str(n))
-#     most_common_ngram = ngram_freq[0][0]
-#     y = find_key_length(most_common_ngram, ciphertext)
-#     return y
-#     # print("m = " + str(y))
+def kasiski(ciphertext, n):
+    ngram_freq = sorted(most_common_substrings_length_n(ciphertext, n).items(), key=operator.itemgetter(1),
+               reverse=True)
+    print(str(n)+"-grams = " + str(ngram_freq))
+    print(str(len(ngram_freq)) + " distinct substrings of length " + str(n))
+    most_common_ngram = ngram_freq[0][0]
+    y = find_key_length(most_common_ngram, ciphertext)
+    return y
 
 
+def test_ic():
+    ciphertext1 = "Thisisenglishtext"  # should have an IC value closer to 0.065
+    ciphertext2 = "fkejshfcjlsieiohb"  # should have an IC value closer to 0.038
+    print(IC(ciphertext1))
+    print(IC(ciphertext2))
+
+def test_dk():
+    y = "vkqcgev"
+    k1 = "AAAAAA"
+    k2 = "HALHALH"
+    print(dk(k1, dk(k2, y)))
 
 
-ciphertext1 = "Thisisenglishtext"  # should have an IC value closer to 0.065
-ciphertext2 = "fkejshfcjlsieiohb"  # should have an IC value closer to 0.038
+def test_kasiski():
+    vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
+    unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
+    
+    m = kasiski(vigenere_ciphertext, 3)
+    print(m)
 
-# ic1 = IC(ciphertext1)
-# ic2 = IC(ciphertext2)
-
-# print(ic1)
-# print(ic2)
-
-# vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
-# unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
-
-
-# kasiski(vigenere_ciphertext, 3)
-# kasiski(unknown_ciphertext, 3)
-
-
-# n = len(vigenere_ciphertext)
-# m = kasiski(vigenere_ciphertext, 3)
-# print(n/m)
-
-# for i in range(m):
-#     y = ""
-#     for j in range(int(n/m)):
-#         y+= vigenere_ciphertext[i]
-
-y = "vkqcgev"
-
-k1 = "AAAAAA"
-k2 = "HALHALH"
-
-# print(dk(k1, dk(k2, y)))
-# print(sigex("V"))
-# print(sigex("K"))
-# print(sigex("Q"))
-# print(sigex("C"))
-# print(sigex("G"))
-# print(sigex("E"))
-# print(sigex("V"))
+if __name__ == "__main__":
+    test_ic()
