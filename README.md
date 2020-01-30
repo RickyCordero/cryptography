@@ -1,6 +1,6 @@
 # cryptography
 
-Some cryptographic algorithms implemented in Python.
+Some cryptographic algorithms implemented in Python from their mathematical definitions.
 
 ## Getting Started
 
