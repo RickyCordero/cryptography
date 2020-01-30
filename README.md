@@ -6,46 +6,29 @@ Some cryptographic functions implemented in Python.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+- Python 3
 
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
+- Create and activate a virtual environment
 
 ```
-Give the example
+virtualenv venv
+source venv/Scripts/activate
 ```
 
-And repeat
+- Install the required packages
 
 ```
-until finished
+pip install -r requirements.txt
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+## Usage
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Test the DES encryption algorithm:
 
 ```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+python des.py
 ```

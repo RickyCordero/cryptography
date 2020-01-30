@@ -109,7 +109,8 @@ def pc1_permute(keystring):
 
 def pc2_permute(keystring):
     """
-    Given a 56-bit binary key string, permutes it using the pc2 table and returns a 48-bit binary round keystring
+    Given a 56-bit binary key string, permutes it using the pc2 table and returns
+    a 48-bit binary round keystring
     """
     k = ""
     for index in pc2:
@@ -140,11 +141,10 @@ def ip_inv_permute(bitstring):
 
 def rotate_left(val, r_bits, max_bits):
     """
-    max bits > 0 == width of the value in bits (e.g., int_16 -> 16)
-    Rotate left: 0b1001 --> 0b0011
+    Rotates a bitstring left: 1001 --> 0011
     """
-    return (val << r_bits%max_bits) & (2**max_bits-1) | \
-    ((val & (2**max_bits-1)) >> (max_bits-(r_bits%max_bits)))
+    return (val << r_bits % max_bits) & (2**max_bits-1) | \
+    ((val & (2**max_bits-1)) >> (max_bits - (r_bits % max_bits)))
 
 
 def shift_left(bitstring, shift_length):
@@ -192,7 +192,8 @@ def collect_cn_or_dn(c):
 
 def collect_keys(c0, d0):
     """
-    Given the initial left and right 28-bit binary strings, generates the key schedule list by permuting the    concatenation of all left and right corresponding pairs
+    Given the initial left and right 28-bit binary strings, generates the key schedule list by permuting the
+    concatenation of all left and right corresponding pairs
     """
     c_n = collect_cn_or_dn(c0)  # evaluates each c_n into a list
     d_n = collect_cn_or_dn(d0)  # evaluates each d_n into a list
@@ -296,8 +297,6 @@ def DES(plaintext, key):
 
     return x
 
-
-# ----------------------------------------------------------------------------------------------------------------------
 
 x = "0123456789ABCDEF"
 

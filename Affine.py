@@ -3,7 +3,18 @@ import collections
 import itertools
 import operator
 
-# actual table of frequencies in order
+
+# we will decode these cyphertexts
+substitution_ciphertext = "EMGLOSUDCGDNCUSWYSFHNSFCYKDPUMLWGYICOXYSIPJCKQPKUGKMGOLICGINCGACKSNISACYKZSCKXECJCKSHYSXCGOIDPKZCNKSHICGIWYGKKGKGOLDSILKGOIUSIGLEDSPWZUGFZCCNDGYYSFUSZCNXEOJNCGYEOWEUPXEZGACGNFGLKNSACIGOIYCKXCJUCIUZCFZCCNDGYYSFEUEKUZCSOCFZCCNCIACZEJNCSHFZEJZEGMXCYHCJUMGKUCY"
+
+vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
+
+affine_ciphertext = "KQEREJEBCPPCJCRKIEACUZBKRVPKRBCIBQCARBJCVFCUPKRIOFKPACUZQEPBKRXPEIIEABDKPBCPFCDCCAFIEABDKPBCPFEQPKAZBKRHAIBKAPCCIBURCCDKDCCJCIDFUIXPAFFERBICZDFKABICBBENEFCUPJCVKABPCYDCCDPKBCOCPERKIVKSCPICBRKIJPKABI"
+
+unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
+
+
+# table of letter frequencies in order
 true_freq_list = sorted({"e": 13.11, "t": 10.47, "a": 8.15, "o": 8.00, "n": 7.1, "r": 6.83, "i": 6.35,
                                       "s": 6.10, "h": 5.26, "d": 3.79, "l": 3.39, "f": 2.92, "c": 2.76, "m": 2.54,
                                       "u": 2.46, "g": 1.99, "y": 1.98, "p": 1.98, "w": 1.54, "b": 1.44, "v": .92,
@@ -12,7 +23,8 @@ true_freq_list = sorted({"e": 13.11, "t": 10.47, "a": 8.15, "o": 8.00, "n": 7.1,
 
 def index(a):
     """
-    Returns the integer representation of the given English character, otherwise returns the string representation of the given integer
+    Returns the integer representation of the given English character, otherwise returns the string
+    representation of the given integer, e.g. a => 0, b => 1, c => 2, ...
     """
     sigma = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
              "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -24,7 +36,8 @@ def index(a):
 
 def index_convert(plaintext):
     """
-    Returns a list containing the integer representations of each character over Z_26 in the given plaintext string
+    Returns a list containing the integer representations of each character over Z_26 in the given 
+    plaintext string
     """
     return [index(character) for character in plaintext]
 
@@ -77,7 +90,8 @@ def phi(n):
 
 def freq(ciphertext):
     """
-    Returns a list representation of the frequency table for the given ciphertext string sorted in ascending order by occurrence number
+    Returns a list representation of the frequency table for the given ciphertext string sorted in ascending
+    order by occurrence number
     """
     unsorted_table = {character.lower(): ciphertext.count(character) for character in set(ciphertext)}
     return sorted(unsorted_table.items(), key=operator.itemgetter(1), reverse=True)
@@ -85,7 +99,9 @@ def freq(ciphertext):
 
 def frequency_analysis(ciphertext):
     """
-    Performs a brute force attack on the ciphertext by first finding all potential keys starting with the most frequently occurring sample letters then testing each key by applying the decryption function on the ciphertext and printing the results ot see if anyone of them is intelligible
+    Performs a brute force attack on the ciphertext by first finding all potential keys starting with the most
+    frequently occurring sample letters then testing each key by applying the decryption function on the
+    ciphertext and printing the results to see if anyone of them is intelligible
     """
     f = freq(ciphertext)
     for i in range(len(f)-2):
@@ -116,14 +132,15 @@ def frequency_analysis(ciphertext):
 
 def keys(x, y):
     """
-    Returns the list all keys k = (a, b) from U(Z_26) x Z_26 such that e(a, b)(x) = y
+    Returns the list of all keys k = (a, b) from U(Z_26) x Z_26 such that e(a, b)(x) = y
     """
     return [(a, b) for a, b in [key for key in itertools.product(inv_zn(26), [n for n in range(26)])] if e(a, b)(x) == y]
 
 
 def brute_force(ciphertext):
     """
-    Constructs and prints multiple plaintext strings using each key in keys by concatenating the result of the decryption function on each ciphertext character
+    Constructs and prints multiple plaintext strings using each key in keys by concatenating the result of the
+    decryption function on each ciphertext character
     """
     frequency_list = freq(ciphertext)
     print("sample frequencies:")
@@ -145,7 +162,6 @@ def brute_force(ciphertext):
             # V, K, X, J, Q, Z
             max_occurring_true_characters = ["v", "k", "x", "j", "q", "z"]
 
-        # print("max occurring true characters: " + str(map(lambda x: index(x), max_occurring_true_characters)))
         print("max occurring true characters: " + str(max_occurring_true_characters))
         max_occurring_sample_character = frequency_list[i][0]
         print("max occurring sample character: " + max_occurring_sample_character)
@@ -164,26 +180,17 @@ def brute_force(ciphertext):
             i += 1
 
 
-# given ciphertexts from book
-substitution_ciphertext = "EMGLOSUDCGDNCUSWYSFHNSFCYKDPUMLWGYICOXYSIPJCKQPKUGKMGOLICGINCGACKSNISACYKZSCKXECJCKSHYSXCGOIDPKZCNKSHICGIWYGKKGKGOLDSILKGOIUSIGLEDSPWZUGFZCCNDGYYSFUSZCNXEOJNCGYEOWEUPXEZGACGNFGLKNSACIGOIYCKXCJUCIUZCFZCCNDGYYSFEUEKUZCSOCFZCCNCIACZEJNCSHFZEJZEGMXCYHCJUMGKUCY"
-
-vigenere_ciphertext = "KCCPKBGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUDDKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYCQKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRLSVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMVGKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFSPEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHIFFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIYCWHJVLNHIQIBTKHJVNPIST"
-
-affine_ciphertext = "KQEREJEBCPPCJCRKIEACUZBKRVPKRBCIBQCARBJCVFCUPKRIOFKPACUZQEPBKRXPEIIEABDKPBCPFCDCCAFIEABDKPBCPFEQPKAZBKRHAIBKAPCCIBURCCDKDCCJCIDFUIXPAFFERBICZDFKABICBBENEFCUPJCVKABPCYDCCDPKBCOCPERKIVKSCPICBRKIJPKABI"
-
-unknown_ciphertext = "BNVSNSIHQCEELSSKKYERIFJKXUMBGYKAMQLJTYAVFBKVTDVBPVVRJYYLAOKYMPQSCGDLFSRLLPROYGESEBUUALRWXMMASAZLGLEDFJBZAVVPXWICGJXASCBYEHOSNMULKCEAHTQOKMFLEBKFXLRRFDTZXCIWBJSICBGAWDVYDHAVFJXZIBKCGJIWEAHTTOEWTUHKRQVVRGZBXYIREMMASCSPBNLHJMBLRFFJELHWEYLWISTFVVYFJCMHYUYRUFSFMGESIGRLWALSWMNUHSIMYYITCCQPZSICEHBCCMZFEGVJYOCDEMMPGHVAAUMELCMOEHVLTIPSUYILVGFLMVWDVYDBTHFRAYISYSGKVSUUHYHGGCKTMBLRX"
-
-
-# brute_force(affine_ciphertext)
-# brute_force(unknown_ciphertext)
-# k = (19, 4)
-
 def decrypt(ciphertext):
+    """
+    Decrypts a ciphertext string using k = (19, 4)
+    """
     op = ""
     for character in ciphertext:
         op += index(d(19, 4)(index(character)))
     return op
 
-print(decrypt(affine_ciphertext))
-# ocanadaterredenosaieuxtonfrontestceintdefleuronsglorieuxcartonbrassaitporterlepeeilsaitporterlacroixtonhistoireestuneepopeedesplusbrillantsexploitsettavaleurdefoitrempeeprotegeranosfoyersetnosdroits
-# Canadian national anthem in french
+
+if __name__ == "__main__":
+    # Decrypt the canadian national anthem in french
+    plaintext = decrypt(affine_ciphertext)
+    print(plaintext)
